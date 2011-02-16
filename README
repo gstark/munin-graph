@@ -1,0 +1,4 @@
+
+This project will supply a Sintra web application that creates a more flexible way to view munin data graphs.  Currently munin graphs are static images created at a specified interval.  Typically graphs have more than one data point and occasionally use a scale that makes graphs difficult to read.
+
+munin-graph will allow metrics to be disabled per graph as well as zooming the X and Y graph access to give a much better view.
