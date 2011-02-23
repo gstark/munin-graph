@@ -1,20 +1,30 @@
-require "lib/plugin"
+require "lib/munin-graph"
 
-describe Plugin do
+module MuninGraph
+  describe Plugin do
 
-  describe "#discover" do
-    it "finds have as many plugins there are files in the plugin path" do
-      Dir.should_receive(:entries).and_return([".", "..", "if_eth0", "if_eth1", "cpu"])
+    describe "#plugins" do
+      it "finds have as many plugins there are files in the plugin path" do
+        Dir.should_receive(:entries).and_return([".", "..", "if_eth0", "if_eth1", "cpu"])
 
-      Plugin.discover.should have(3).plugins
+        Plugin.plugins.should have(3).plugins
+      end
     end
-  end
-  
-  describe "#parse_config" do
-    before(:each) do
-      @plugin = Plugin.new("/path/to/plugin")
 
-      @plugin.should_receive(:raw_config).and_return(<<END
+    describe "#name" do
+      it "should be derived from the filename of the script itself" do
+        @plugin = Plugin.new("/path/to/plugin_eth0")
+
+        @plugin.name.should == "plugin_eth0"
+      end
+    end
+
+
+    describe "#parse_config" do
+      before(:each) do
+        @plugin = Plugin.new("/path/to/plugin")
+
+        @plugin.should_receive(:raw_config).and_return(<<END
 graph_order down up
 graph_title eth0 traffic
 graph_args --base 1000
@@ -34,18 +44,23 @@ up.max 1000000000
 down.max 1000000000
 END
 )
-      @plugin.parse_config
-    end
+        @plugin.parse_config
+      end
 
-    it "should take any parameter without a '.' as a plain parameter" do
-      @plugin.parameters["graph_order"].should == "down up"
-    end
+      it "should have a graph category" do
+        @plugin.graph_category.should == "network"
+      end
 
-    it "should take any parameter with a '.' as a parameter describing a metric" do
-      @plugin.metrics.should include("down")
-      @plugin.metrics.should include("up")
+      it "should take any parameter without a '.' as a plain parameter" do
+        @plugin.parameters["graph_order"].should == "down up"
+      end
 
-      @plugin.metrics["up"]["type"].should == "COUNTER"
+      it "should take any parameter with a '.' as a parameter describing a metric" do
+        @plugin.metrics.should include("down")
+        @plugin.metrics.should include("up")
+
+        @plugin.metrics["up"]["type"].should == "COUNTER"
+      end
     end
   end
 end
