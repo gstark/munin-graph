@@ -18,6 +18,7 @@ module MuninGraph
     def initialize(path)
       @path = path
       @config = { PARAMETER_KEY => {}, METRIC_KEY => {} }
+      @config_loaded = false
     end
 
     def name
@@ -25,6 +26,8 @@ module MuninGraph
     end
 
     def graph_category
+      load_config_if_needed
+
       parameters["graph_category"]
     end
 
@@ -33,6 +36,8 @@ module MuninGraph
     # Example:
     #   plugin.parameters # => { "graph_name" => "Super Graph", "graph_order" => "first second"}
     def parameters
+      load_config_if_needed
+
       @config[PARAMETER_KEY]
     end
 
@@ -41,8 +46,16 @@ module MuninGraph
     # Example:
     #   plugin.metrics # => { "first" => { "label" => "The first param" }, "second" => { "label" => "The second parameter " } }
     def metrics
+      load_config_if_needed
+
       @config[PARAMETER_KEY]
     end
+
+    def rrd_data(host, metric)
+      RRDData.new(self, host, metric)
+    end
+
+    private
 
     # Parse the configuration data, call before access parameters or metrics
     # 
@@ -70,11 +83,17 @@ module MuninGraph
       end
     end
 
-    def rrd_data(host, metric)
-      RRDData.new(self, host, metric)
+    def load_config_if_needed
+      return if config_loaded?
+
+      @config_loaded = true
+
+      parse_config
     end
 
-    private
+    def config_loaded?
+      @config_loaded
+    end
 
     def raw_config
       `#{@path} config`

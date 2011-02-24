@@ -20,7 +20,7 @@ module MuninGraph
     end
 
 
-    describe "#parse_config" do
+    describe "configuration" do
       before(:each) do
         @plugin = Plugin.new("/path/to/plugin")
 
@@ -44,7 +44,6 @@ up.max 1000000000
 down.max 1000000000
 END
 )
-        @plugin.parse_config
       end
 
       it "should have a graph category" do
