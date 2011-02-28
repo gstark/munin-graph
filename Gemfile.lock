@@ -6,6 +6,7 @@ GEM
     ffi (1.0.5)
       rake (>= 0.8.7)
     i18n (0.5.0)
+    rack (1.2.1)
     rake (0.8.7)
     rrd-ffi (0.2.5)
       activesupport
@@ -18,6 +19,10 @@ GEM
     rspec-expectations (2.5.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.5.0)
+    sinatra (1.1.3)
+      rack (~> 1.1)
+      tilt (>= 1.2.2, < 2.0)
+    tilt (1.2.2)
 
 PLATFORMS
   ruby
@@ -26,3 +31,4 @@ DEPENDENCIES
   i18n
   rrd-ffi
   rspec (= 2.5.0)
+  sinatra

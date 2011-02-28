@@ -1,0 +1,8 @@
+- @plugins_by_category.each do |category, plugins|
+  = category
+  %br
+  - plugins.each do |plugin|
+    - plugin.metrics.each do |metric|
+      = metric
+      %br
+      = plugin.rrd_data(@host, metric).data_points(@date_range)
